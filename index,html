@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cowmbat: The Moo-Dojo</title>
+<style>
+  :root {
+    --bg:#0e1320; --fg:#e7f2ff; --accent:#7ad7ff; --accent2:#ffd36b; --red:#ff6b6b; --green:#4cd97b;
+    --card:#131a2a; --muted:#7d8aa6;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 50% 50%, #17213a, var(--bg));color:var(--fg);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  h1{font-size:22px;font-weight:800;letter-spacing:.3px;margin:0}
+  .pill{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+  .panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px 14px;display:flex;gap:10px;align-items:center}
+  .panel small{color:var(--muted)}
+  .kbd{border:1px solid rgba(255,255,255,.18);border-bottom-width:2px;background:#0b1020; padding:2px 6px;border-radius:6px;color:#cfe4ff;margin:0 2px;font-weight:700}
+  canvas{width:100%;height:auto;display:block;border-radius:18px;border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 28px rgba(0,0,0,.35);background:#1a2a1a}
+  footer{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .btn{cursor:pointer;border:1px solid rgba(255,255,255,.18);background:#0b1020;border-radius:10px;padding:8px 12px;color:#cfe4ff;font-weight:700}
+  .btn:hover{transform:translateY(-1px)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1><span class="pill">Cowmbat</span> — The Moo-Dojo</h1>
+      <div class="panel">
+        <small>
+          P1: <span class="kbd">WASD</span> move · <span class="kbd">F</span> hit · <span class="kbd">G</span> dash · <span class="kbd">H</span> rage
+          &nbsp;|&nbsp; P2: <span class="kbd">Arrows</span> · <span class="kbd">/</span> hit · <span class="kbd">.</span> dash · <span class="kbd">;</span> rage
+          &nbsp;|&nbsp; <span class="kbd">Enter</span> start · <span class="kbd">P</span> pause · <span class="kbd">B</span> bot
+        </small>
+      </div>
+    </header>
+    <canvas id="game" width="960" height="540"></canvas>
+    <footer>
+      <button class="btn" id="startBtn">Start / Next (Enter)</button>
+      <button class="btn" id="botBtn">Toggle Bot (B)</button>
+      <button class="btn" id="pauseBtn">Pause (P)</button>
+      <button class="btn" id="resetBtn">Hard Reset</button>
+    </footer>
+  </div>
+
+<script>
+(() => {
+  // --- Helpers --------------------------------------------------------------
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const rand = (a,b)=>a+Math.random()*(b-a);
+  const now = ()=>performance.now();
+
+  // --- Input ----------------------------------------------------------------
+  const keys = new Set();
+  window.addEventListener('keydown', e => { keys.add(e.key); if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault(); });
+  window.addEventListener('keyup', e => keys.delete(e.key));
+
+  // --- Canvas ---------------------------------------------------------------
+  const cvs = document.getElementById('game');
+  const ctx = cvs.getContext('2d');
+  const W = cvs.width, H = cvs.height;
+
+  // --- Game State -----------------------------------------------------------
+  const Game = {
+    phase: 'menu', // menu | playing | roundOver | matchOver | paused
+    round: 1,
+    p1Wins: 0,
+    p2Wins: 0,
+    lastTick: now(),
+    milkTimer: 0,
+    botEnabled: false,
+  };
+
+  // Buttons
+  document.getElementById('startBtn').onclick = () => startOrNext();
+  document.getElementById('botBtn').onclick = () => { Game.botEnabled = !Game.botEnabled; };
+  document.getElementById('pauseBtn').onclick = () => togglePause();
+  document.getElementById('resetBtn').onclick = () => hardReset();
+
+  window.addEventListener('keydown', e=>{
+    if(e.key==='Enter') startOrNext();
+    if(e.key==='p' || e.key==='P') togglePause();
+    if(e.key==='b' || e.key==='B') Game.botEnabled = !Game.botEnabled;
+  });
+
+  function startOrNext(){
+    if(Game.phase==='menu' || Game.phase==='roundOver'){ startRound(); }
+    else if(Game.phase==='matchOver'){ hardReset(); startRound(); }
+  }
+  function togglePause(){
+    if(Game.phase==='playing'){ Game.phase='paused'; }
+    else if(Game.phase==='paused'){ Game.lastTick = now(); Game.phase='playing'; }
+  }
+  function hardReset(){
+    Game.phase='menu'; Game.round=1; Game.p1Wins=0; Game.p2Wins=0; objects.length=0;
+  }
+
+  // --- Entities -------------------------------------------------------------
+  class Cow {
+    constructor(x,y,color,controls,isBot=false){
+      this.x=x; this.y=y; this.r=24;
+      this.color=color;
+      this.vx=0; this.vy=0;
+      this.speed=2.3;
+      this.hp=100; this.maxHp=100;
+      this.rage=0; this.maxRage=100;
+      this.stamina=100; this.maxStamina=100;
+      this.hitCd=0; this.dashCd=0; this.ifr=0; this.rageActive=0;
+      this.facing=1;
+      this.controls=controls;
+      this.isBot=isBot;
+      this.name=controls.name;
+    }
+    input(){
+      if(this.isBot) return this.botInput();
+      const c=this.controls;
+      let mx=0,my=0;
+      if(keys.has(c.up)) my-=1;
+      if(keys.has(c.down)) my+=1;
+      if(keys.has(c.left)) mx-=1;
+      if(keys.has(c.right)) mx+=1;
+      const len=Math.hypot(mx,my)||1;
+      mx/=len; my/=len;
+      this.vx=mx*this.speed*(this.rageActive>0?1.2:1);
+      this.vy=my*this.speed*(this.rageActive>0?1.2:1);
+      if(mx) this.facing = mx>0?1:-1;
+
+      if(this.hitCd>0) this.hitCd--;
+      if(this.dashCd>0) this.dashCd--;
+      if(this.ifr>0) this.ifr--;
+      if(this.rageActive>0) this.rageActive--;
+
+      // Actions
+      if(keys.has(c.attack)) this.tryHit();
+      if(keys.has(c.dash)) this.tryDash();
+      if(keys.has(c.rage)) this.tryRage();
+
+      // Rage gain from moving a little
+      if(mx||my) this.rage = clamp(this.rage+0.06,0,this.maxRage);
+    }
+    botInput(){
+      // Simple bot: orbit, dash in when close, block obstacles
+      const foe = this===P1?P2:P1;
+      const dx=foe.x-this.x, dy=foe.y-this.y, d=Math.hypot(dx,dy);
+      // Move: try to face foe while strafing a bit
+      const targetAngle=Math.atan2(dy,dx);
+      let mx=Math.cos(targetAngle), my=Math.sin(targetAngle);
+      // Keep some distance
+      if(d<120){ mx=-mx; my=-my; }
+      // Avoid obstacles crudely
+      for(const o of objects) if(o.solid){
+        const ddx=o.x-this.x, ddy=o.y-this.y, dd=Math.hypot(ddx,ddy);
+        if(dd<70){ mx -= ddx/dd; my -= ddy/dd; }
+      }
+      const len=Math.hypot(mx,my)||1; mx/=len; my/=len;
+      this.vx=mx*this.speed; this.vy=my*this.speed;
+      this.facing = dx>0?1:-1;
+
+      if(this.hitCd>0) this.hitCd--;
+      if(this.dashCd>0) this.dashCd--;
+      if(this.ifr>0) this.ifr--;
+      if(this.rageActive>0) this.rageActive--;
+
+      // Decisions
+      if(d<80 && this.hitCd===0) this.tryHit();
+      if(d<180 && this.dashCd===0 && this.stamina>30) this.tryDash();
+      if(this.rage>=95 && d<220 && this.rageActive===0) this.tryRage();
+
+      // Build rage slowly over time
+      this.rage = clamp(this.rage+0.03,0,this.maxRage);
+    }
+    tryHit(){
+      if(this.hitCd>0) return;
+      this.hitCd=25;
+      // Create a short-lived hitbox
+      const reach=32;
+      const hb = new Hitbox(this, this.x + this.facing*(this.r+reach), this.y, 20, 16, 10, 8);
+      objects.push(hb);
+      sfx('hit');
+    }
+    tryDash(){
+      if(this.dashCd>0 || this.stamina<20) return;
+      this.dashCd=50;
+      this.stamina-=20;
+      const boost=5;
+      this.x += this.facing*boost*10;
+      this.ifr=15; // brief invuln
+      sfx('dash');
+    }
+    tryRage(){
+      if(this.rageActive>0 || this.rage<100) return;
+      this.rage=0;
+      this.rageActive=70; // ~1s at 60fps
+      this.ifr=40;
+      sfx('rage');
+    }
+    damage(n, knockX=0, knockY=0){
+      if(this.ifr>0) return;
+      if(this.rageActive>0) n *= 0.5; // reduced damage
+      this.hp = clamp(this.hp-n,0,this.maxHp);
+      this.rage = clamp(this.rage + n*0.8,0,this.maxRage);
+      this.x += knockX; this.y += knockY;
+      this.ifr=10;
+      if(this.hp<=0) roundOver(this===P1?2:1);
+    }
+    update(){
+      this.input();
+      // Friction
+      this.vx *= .98; this.vy *= .98;
+      this.x += this.vx; this.y += this.vy;
+      // Stamina regen
+      this.stamina = clamp(this.stamina + 0.25, 0, this.maxStamina);
+
+      // Collide with walls
+      const m=30;
+      this.x = clamp(this.x, m, W-m);
+      this.y = clamp(this.y, m+40, H-m);
+
+      // Collide with obstacles
+      for(const o of objects){
+        if(!o.solid) continue;
+        const dx=this.x-o.x, dy=this.y-o.y;
+        const d=Math.hypot(dx,dy);
+        const min= this.r + o.r;
+        if(d<min){
+          const nx=dx/d, ny=dy/d;
+          this.x = o.x + nx*min;
+          this.y = o.y + ny*min;
+        }
+      }
+    }
+    draw(){
+      // shadow
+      ctx.save();
+      ctx.globalAlpha=.2;
+      ctx.beginPath(); ctx.ellipse(this.x, this.y+this.r, this.r*1.2, this.r*.5, 0, 0, Math.PI*2); ctx.fillStyle='#000'; ctx.fill();
+      ctx.restore();
+
+      // body
+      ctx.fillStyle=this.color;
+      roundCow(this.x,this.y,this.r);
+      ctx.fill();
+
+      // face line
+      ctx.strokeStyle='rgba(0,0,0,.35)';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y-this.r*0.5);
+      ctx.lineTo(this.x + this.facing*this.r*0.4, this.y-this.r*0.5);
+      ctx.stroke();
+
+      // horns
+      ctx.fillStyle='#fff8d6';
+      horn(this.x + this.facing*10, this.y-22, this.facing);
+      horn(this.x - this.facing*2, this.y-22, this.facing);
+
+      // eyes
+      ctx.fillStyle='#10151f';
+      eye(this.x + this.facing*8, this.y-6);
+      eye(this.x + this.facing*2, this.y-6);
+
+      // nose
+      ctx.fillStyle='#f7b1b1';
+      ctx.beginPath(); ctx.ellipse(this.x, this.y+8, 12,6,0,0,Math.PI*2); ctx.fill();
+
+      // outline when invuln
+      if(this.ifr>0 || this.rageActive>0){
+        ctx.strokeStyle=this.rageActive>0?'#ffd36b':'#7ad7ff';
+        ctx.lineWidth=3;
+        ctx.beginPath(); roundCow(this.x,this.y,this.r); ctx.stroke();
+      }
+    }
+  }
+
+  class Hitbox {
+    constructor(owner, x, y, w, h, dmg, kb){
+      this.owner=owner; this.x=x; this.y=y; this.w=w; this.h=h; this.dmg=dmg; this.kb=kb;
+      this.life=8; this.solid=false;
+    }
+    update(){
+      this.life--;
+      if(this.life<=0) this.dead=true;
+      // Collision with other cow
+      const foe = this.owner===P1?P2:P1;
+      if(rectCircle(this.x-this.w/2,this.y-this.h/2,this.w,this.h,foe.x,foe.y,foe.r)){
+        const dirX = Math.sign(this.owner.facing) || 1;
+        foe.damage(this.dmg, dirX*this.kb*2, -2);
+        this.dead=true;
+        sfx('bonk');
+      }
+    }
+    draw(){
+      ctx.save();
+      ctx.globalAlpha=.08;
+      ctx.fillStyle='#fff';
+      ctx.fillRect(this.x-this.w/2, this.y-this.h/2, this.w, this.h);
+      ctx.restore();
+    }
+  }
+
+  class Obstacle {
+    constructor(x,y,r){ this.x=x; this.y=y; this.r=r; this.solid=true; }
+    update(){}
+    draw(){
+      // hay bale
+      ctx.fillStyle='#caa756';
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#8f6d2a'; ctx.stroke();
+      // ties
+      ctx.strokeStyle='rgba(0,0,0,.2)';
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r*0.6,0,Math.PI*2); ctx.stroke();
+    }
+  }
+
+  class Milk {
+    constructor(x,y){ this.x=x; this.y=y; this.r=14; this.solid=false; this.life=9000; }
+    update(){
+      // pickup
+      for(const c of [P1,P2]){
+        const d=Math.hypot(c.x-this.x,c.y-this.y);
+        if(d < c.r + this.r){
+          c.hp = clamp(c.hp+15,0,c.maxHp);
+          this.dead=true;
+          sfx('milk');
+        }
+      }
+    }
+    draw(){
+      ctx.save();
+      ctx.translate(this.x,this.y);
+      ctx.fillStyle='#ffffff';
+      ctx.beginPath(); ctx.arc(0,0,this.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#88c7ff'; ctx.lineWidth=3; ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // --- Geometry helpers for drawing cow features ---------------------------
+  function roundCow(x,y,r){
+    const path = new Path2D();
+    path.ellipse(x,y,r,r,0,0,Math.PI*2);
+    return path;
+  }
+  function horn(x,y,dir){
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.quadraticCurveTo(x+dir*10, y-10, x+dir*20, y-2);
+    ctx.quadraticCurveTo(x+dir*10, y+6, x, y);
+    ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.25)'; ctx.stroke();
+  }
+  function eye(x,y){
+    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+  }
+
+  // --- Collision ------------------------------------------------------------
+  function rectCircle(rx, ry, rw, rh, cx, cy, cr){
+    const nearestX = clamp(cx, rx, rx+rw);
+    const nearestY = clamp(cy, ry, ry+rh);
+    const dx = cx - nearestX, dy = cy - nearestY;
+    return (dx*dx + dy*dy) <= cr*cr;
+  }
+
+  // --- SFX (tiny beeps using WebAudio) -------------------------------------
+  const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  function sfx(type){
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    const t = audioCtx.currentTime;
+    let f1=220, f2=0, dur=.08;
+    if(type==='bonk'){ f1=110; f2=55; dur=.07; }
+    if(type==='dash'){ f1=330; f2=220; dur=.06; }
+    if(type==='rage'){ f1=120; f2=40; dur=.25; }
+    if(type==='hit'){ f1=180; f2=90; dur=.06; }
+    if(type==='milk'){ f1=660; f2=440; dur=.12; }
+    o.frequency.setValueAtTime(f1, t);
+    o.frequency.exponentialRampToValueAtTime(f2||f1/2, t+dur);
+    g.gain.setValueAtTime(.15, t);
+    g.gain.exponentialRampToValueAtTime(.0001, t+dur);
+    o.start(t); o.stop(t+dur);
+  }
+
+  // --- World setup ----------------------------------------------------------
+  const objects = [];
+  const UI = {
+    drawBars(){
+      // top banner
+      ctx.fillStyle='rgba(0,0,0,.25)';
+      ctx.fillRect(0,0,W,40);
+
+      drawMeter(20,12,300,16, P1.hp/P1.maxHp, '#ff6b6b', 'HP');
+      drawMeter(20,28,300,8, P1.rage/P1.maxRage, '#ffd36b', 'RAGE', true);
+
+      drawMeter(W-320,12,300,16, P2.hp/P2.maxHp, '#4cd97b', 'HP', false, true);
+      drawMeter(W-320,28,300,8, P2.rage/P2.maxRage, '#ffd36b', 'RAGE', true, true);
+
+      // round pips
+      ctx.fillStyle='#fff';
+      for(let i=0;i<2;i++){
+        ctx.globalAlpha = i<Game.p1Wins?1:.2;
+        ctx.fillRect(340 + i*16, 14, 10,10);
+        ctx.globalAlpha = i<Game.p2Wins?1:.2;
+        ctx.fillRect(W-340 - i*16, 14, 10,10);
+        ctx.globalAlpha=1;
+      }
+
+      // bot badge
+      if(Game.botEnabled){
+        ctx.fillStyle='rgba(122,215,255,.2)';
+        ctx.fillRect(W/2-60,8,120,24);
+        ctx.fillStyle='#7ad7ff';
+        ctx.font='bold 14px system-ui';
+        ctx.textAlign='center';
+        ctx.fillText('BOT ON (P2)', W/2, 25);
+      }
+    },
+    drawCenterLabel(text, sub=''){
+      ctx.fillStyle='rgba(0,0,0,.45)';
+      ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#e7f2ff';
+      ctx.font='bold 36px system-ui';
+      ctx.textAlign='center';
+      ctx.fillText(text, W/2, H/2 - 8);
+      if(sub){
+        ctx.fillStyle='#7d8aa6';
+        ctx.font='16px system-ui';
+        ctx.fillText(sub, W/2, H/2 + 20);
+      }
+    }
+  };
+
+  function drawMeter(x,y,w,h, t, color, label, thin=false, right=false){
+    ctx.save();
+    ctx.globalAlpha=.9;
+    ctx.fillStyle='rgba(255,255,255,.06)'; ctx.fillRect(x,y,w,h);
+    ctx.fillStyle=color; ctx.fillRect(x,y, Math.max(0,w*t), h);
+    ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle='#cfe4ff'; ctx.font=(thin?'10px':'12px')+' system-ui';
+    ctx.textAlign= right?'right':'left';
+    ctx.fillText(label, right?x+w-4:x+4, y-2);
+    ctx.restore();
+  }
+
+  // pasture background & sidelines
+  function drawArena(){
+    // Grass gradient
+    const g=ctx.createLinearGradient(0,80,0,H);
+    g.addColorStop(0,'#274d27'); g.addColorStop(1,'#1b3a1b');
+    ctx.fillStyle=g; ctx.fillRect(0,40,W,H-40);
+
+    // Fence
+    ctx.fillStyle='#8c6b3e';
+    for(let i=0;i<20;i++){
+      const px = i*(W/20)+10;
+      ctx.fillRect(px, 44, 6, 36);
+    }
+    ctx.fillRect(0,48,W,6);
+    ctx.fillRect(0,68,W,6);
+  }
+
+  // players
+  const P1 = new Cow(220, H/2+40, '#b9e0ff', {
+    up:'w',down:'s',left:'a',right:'d',attack:'f',dash:'g',rage:'h',name:'Bluebell'
+  });
+  const P2 = new Cow(W-220, H/2+40, '#c4ffcf', {
+    up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight',attack:'/',dash:'.',rage:';',name:'Clover'
+  }, false);
+
+  // Obstacles (hay bales)
+  const hayLayout = [
+    new Obstacle(W/2-120, H/2+40, 18),
+    new Obstacle(W/2+120, H/2+40, 18),
+    new Obstacle(W/2, H/2-10, 22),
+  ];
+  objects.push(...hayLayout);
+
+  // --- Round / Match flow ---------------------------------------------------
+  function startRound(){
+    Game.phase='playing';
+    Game.lastTick = now();
+    Game.milkTimer = 600; // frames
+    // reset players
+    Object.assign(P1,{x:220,y:H/2+40,vx:0,vy:0,hp:100,stamina:100,rage:0,ifr:0,rageActive:0});
+    Object.assign(P2,{x:W-220,y:H/2+40,vx:0,vy:0,hp:100,stamina:100,rage:0,ifr:0,rageActive:0,isBot:Game.botEnabled});
+    // clear temp objects but keep hay
+    for(let i=objects.length-1;i>=0;i--) if(!(objects[i] instanceof Obstacle)) objects.splice(i,1);
+  }
+
+  function roundOver(winner){
+    if(Game.phase!=='playing') return;
+    Game.phase='roundOver';
+    if(winner===1) Game.p1Wins++; else Game.p2Wins++;
+    // Match over?
+    if(Game.p1Wins===2 || Game.p2Wins===2){
+      Game.phase='matchOver';
+    }
+  }
+
+  // --- Loop -----------------------------------------------------------------
+  function loop(){
+    requestAnimationFrame(loop);
+    const t = now();
+    const dt = Math.min(33, t - Game.lastTick); // ms cap
+    Game.lastTick = t;
+
+    // Update
+    if(Game.phase==='playing'){
+      P1.update(); P2.update();
+      // Spawn milk occasionally
+      if(--Game.milkTimer<=0){
+        Game.milkTimer = rand(900,1400);
+        objects.push(new Milk(rand(80,W-80), rand(120,H-80)));
+      }
+      for(const o of objects) o.update?.();
+      // Cleanup
+      for(let i=objects.length-1;i>=0;i--) if(objects[i].dead) objects.splice(i,1);
+    }
+
+    // Draw
+    ctx.clearRect(0,0,W,H);
+    drawArena();
+    for(const o of objects) o.draw?.();
+    P1.draw(); P2.draw();
+    UI.drawBars();
+
+    // overlays
+    if(Game.phase==='menu'){
+      UI.drawCenterLabel('Press Enter to Start', 'B to enable Bot · Best of 3');
+    } else if(Game.phase==='roundOver'){
+      UI.drawCenterLabel('Round Over', 'Press Enter for next round');
+    } else if(Game.phase==='matchOver'){
+      const text = Game.p1Wins>Game.p2Wins ? 'Bluebell wins the Match!' : 'Clover wins the Match!';
+      UI.drawCenterLabel(text, 'Press Enter to play again');
+    } else if(Game.phase==='paused'){
+      UI.drawCenterLabel('Paused', 'Press P to resume');
+    }
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
