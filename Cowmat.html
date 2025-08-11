@@ -1,0 +1,562 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2566">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="utf-8" /&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</p>
+<p class="p1">&lt;title&gt;Cowmbat: The Moo-Dojo&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--bg:#0e1320; --fg:#e7f2ff; --accent:#7ad7ff; --accent2:#ffd36b; --red:#ff6b6b; --green:#4cd97b;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--card:#131a2a; --muted:#7d8aa6;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*{box-sizing:border-box}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 50% 50%, #17213a, var(--bg));color:var(--fg);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.wrap{max-width:1100px;margin:0 auto;padding:18px}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>h1{font-size:22px;font-weight:800;letter-spacing:.3px;margin:0}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pill{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:10px 14px;display:flex;gap:10px;align-items:center}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.panel small{color:var(--muted)}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.kbd{border:1px solid rgba(255,255,255,.18);border-bottom-width:2px;background:#0b1020; padding:2px 6px;border-radius:6px;color:#cfe4ff;margin:0 2px;font-weight:700}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas{width:100%;height:auto;display:block;border-radius:18px;border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 28px rgba(0,0,0,.35);background:#1a2a1a}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>footer{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn{cursor:pointer;border:1px solid rgba(255,255,255,.18);background:#0b1020;border-radius:10px;padding:8px 12px;color:#cfe4ff;font-weight:700}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn:hover{transform:translateY(-1px)}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="wrap"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;&lt;span class="pill"&gt;Cowmbat&lt;/span&gt; — The Moo-Dojo&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="panel"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;small&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>P1: &lt;span class="kbd"&gt;WASD&lt;/span&gt; move · &lt;span class="kbd"&gt;F&lt;/span&gt; hit · &lt;span class="kbd"&gt;G&lt;/span&gt; dash · &lt;span class="kbd"&gt;H&lt;/span&gt; rage</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&amp;nbsp;|&amp;nbsp; P2: &lt;span class="kbd"&gt;Arrows&lt;/span&gt; · &lt;span class="kbd"&gt;/&lt;/span&gt; hit · &lt;span class="kbd"&gt;.&lt;/span&gt; dash · &lt;span class="kbd"&gt;;&lt;/span&gt; rage</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&amp;nbsp;|&amp;nbsp; &lt;span class="kbd"&gt;Enter&lt;/span&gt; start · &lt;span class="kbd"&gt;P&lt;/span&gt; pause · &lt;span class="kbd"&gt;B&lt;/span&gt; bot</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/small&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;canvas id="game" width="960" height="540"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;footer&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn" id="startBtn"&gt;Start / Next (Enter)&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn" id="botBtn"&gt;Toggle Bot (B)&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn" id="pauseBtn"&gt;Pause (P)&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn" id="resetBtn"&gt;Hard Reset&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Helpers --------------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const clamp = (v, a, b) =&gt; Math.max(a, Math.min(b, v));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const lerp = (a,b,t)=&gt;a+(b-a)*t;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const rand = (a,b)=&gt;a+Math.random()*(b-a);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const now = ()=&gt;performance.now();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Input ----------------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const keys = new Set();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.addEventListener('keydown', e =&gt; { keys.add(e.key); if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault(); });</p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.addEventListener('keyup', e =&gt; keys.delete(e.key));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Canvas ---------------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const cvs = document.getElementById('game');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ctx = cvs.getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const W = cvs.width, H = cvs.height;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Game State -----------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const Game = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>phase: 'menu', // menu | playing | roundOver | matchOver | paused</p>
+<p class="p1"><span class="Apple-converted-space">    </span>round: 1,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>p1Wins: 0,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>p2Wins: 0,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>lastTick: now(),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>milkTimer: 0,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>botEnabled: false,</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Buttons</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('startBtn').onclick = () =&gt; startOrNext();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('botBtn').onclick = () =&gt; { Game.botEnabled = !Game.botEnabled; };</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('pauseBtn').onclick = () =&gt; togglePause();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('resetBtn').onclick = () =&gt; hardReset();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.addEventListener('keydown', e=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(e.key==='Enter') startOrNext();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(e.key==='p' || e.key==='P') togglePause();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(e.key==='b' || e.key==='B') Game.botEnabled = !Game.botEnabled;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function startOrNext(){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(Game.phase==='menu' || Game.phase==='roundOver'){ startRound(); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>else if(Game.phase==='matchOver'){ hardReset(); startRound(); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function togglePause(){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(Game.phase==='playing'){ Game.phase='paused'; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>else if(Game.phase==='paused'){ Game.lastTick = now(); Game.phase='playing'; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function hardReset(){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Game.phase='menu'; Game.round=1; Game.p1Wins=0; Game.p2Wins=0; objects.length=0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Entities -------------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>class Cow {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>constructor(x,y,color,controls,isBot=false){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.x=x; this.y=y; this.r=24;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.color=color;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.vx=0; this.vy=0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.speed=2.3;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.hp=100; this.maxHp=100;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.rage=0; this.maxRage=100;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.stamina=100; this.maxStamina=100;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.hitCd=0; this.dashCd=0; this.ifr=0; this.rageActive=0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.facing=1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.controls=controls;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.isBot=isBot;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.name=controls.name;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>input(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.isBot) return this.botInput();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const c=this.controls;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let mx=0,my=0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.up)) my-=1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.down)) my+=1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.left)) mx-=1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.right)) mx+=1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const len=Math.hypot(mx,my)||1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>mx/=len; my/=len;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.vx=mx*this.speed*(this.rageActive&gt;0?1.2:1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.vy=my*this.speed*(this.rageActive&gt;0?1.2:1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(mx) this.facing = mx&gt;0?1:-1;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.hitCd&gt;0) this.hitCd--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.dashCd&gt;0) this.dashCd--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.ifr&gt;0) this.ifr--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.rageActive&gt;0) this.rageActive--;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Actions</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.attack)) this.tryHit();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.dash)) this.tryDash();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(keys.has(c.rage)) this.tryRage();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Rage gain from moving a little</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(mx||my) this.rage = clamp(this.rage+0.06,0,this.maxRage);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>botInput(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Simple bot: orbit, dash in when close, block obstacles</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const foe = this===P1?P2:P1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const dx=foe.x-this.x, dy=foe.y-this.y, d=Math.hypot(dx,dy);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Move: try to face foe while strafing a bit</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const targetAngle=Math.atan2(dy,dx);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let mx=Math.cos(targetAngle), my=Math.sin(targetAngle);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Keep some distance</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(d&lt;120){ mx=-mx; my=-my; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Avoid obstacles crudely</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for(const o of objects) if(o.solid){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const ddx=o.x-this.x, ddy=o.y-this.y, dd=Math.hypot(ddx,ddy);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(dd&lt;70){ mx -= ddx/dd; my -= ddy/dd; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const len=Math.hypot(mx,my)||1; mx/=len; my/=len;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.vx=mx*this.speed; this.vy=my*this.speed;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.facing = dx&gt;0?1:-1;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.hitCd&gt;0) this.hitCd--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.dashCd&gt;0) this.dashCd--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.ifr&gt;0) this.ifr--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.rageActive&gt;0) this.rageActive--;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Decisions</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(d&lt;80 &amp;&amp; this.hitCd===0) this.tryHit();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(d&lt;180 &amp;&amp; this.dashCd===0 &amp;&amp; this.stamina&gt;30) this.tryDash();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.rage&gt;=95 &amp;&amp; d&lt;220 &amp;&amp; this.rageActive===0) this.tryRage();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Build rage slowly over time</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.rage = clamp(this.rage+0.03,0,this.maxRage);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tryHit(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.hitCd&gt;0) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.hitCd=25;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Create a short-lived hitbox</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const reach=32;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const hb = new Hitbox(this, this.x + this.facing*(this.r+reach), this.y, 20, 16, 10, 8);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>objects.push(hb);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>sfx('hit');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tryDash(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.dashCd&gt;0 || this.stamina&lt;20) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.dashCd=50;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.stamina-=20;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const boost=5;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.x += this.facing*boost*10;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.ifr=15; // brief invuln</p>
+<p class="p1"><span class="Apple-converted-space">      </span>sfx('dash');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tryRage(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.rageActive&gt;0 || this.rage&lt;100) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.rage=0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.rageActive=70; // ~1s at 60fps</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.ifr=40;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>sfx('rage');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>damage(n, knockX=0, knockY=0){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.ifr&gt;0) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.rageActive&gt;0) n *= 0.5; // reduced damage</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.hp = clamp(this.hp-n,0,this.maxHp);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.rage = clamp(this.rage + n*0.8,0,this.maxRage);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.x += knockX; this.y += knockY;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.ifr=10;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.hp&lt;=0) roundOver(this===P1?2:1);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>update(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.input();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Friction</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.vx *= .98; this.vy *= .98;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.x += this.vx; this.y += this.vy;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Stamina regen</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.stamina = clamp(this.stamina + 0.25, 0, this.maxStamina);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Collide with walls</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const m=30;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.x = clamp(this.x, m, W-m);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.y = clamp(this.y, m+40, H-m);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Collide with obstacles</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for(const o of objects){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(!o.solid) continue;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const dx=this.x-o.x, dy=this.y-o.y;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const d=Math.hypot(dx,dy);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const min= this.r + o.r;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(d&lt;min){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const nx=dx/d, ny=dy/d;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.x = o.x + nx*min;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.y = o.y + ny*min;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>draw(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// shadow</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.globalAlpha=.2;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.beginPath(); ctx.ellipse(this.x, this.y+this.r, this.r*1.2, this.r*.5, 0, 0, Math.PI*2); ctx.fillStyle='#000'; ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.restore();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// body</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle=this.color;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>roundCow(this.x,this.y,this.r);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fill();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// face line</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.strokeStyle='rgba(0,0,0,.35)';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.lineWidth=2;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.moveTo(this.x, this.y-this.r*0.5);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.lineTo(this.x + this.facing*this.r*0.4, this.y-this.r*0.5);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.stroke();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// horns</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#fff8d6';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>horn(this.x + this.facing*10, this.y-22, this.facing);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>horn(this.x - this.facing*2, this.y-22, this.facing);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// eyes</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#10151f';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>eye(this.x + this.facing*8, this.y-6);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>eye(this.x + this.facing*2, this.y-6);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// nose</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#f7b1b1';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.beginPath(); ctx.ellipse(this.x, this.y+8, 12,6,0,0,Math.PI*2); ctx.fill();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// outline when invuln</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.ifr&gt;0 || this.rageActive&gt;0){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.strokeStyle=this.rageActive&gt;0?'#ffd36b':'#7ad7ff';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.lineWidth=3;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.beginPath(); roundCow(this.x,this.y,this.r); ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>class Hitbox {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>constructor(owner, x, y, w, h, dmg, kb){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.owner=owner; this.x=x; this.y=y; this.w=w; this.h=h; this.dmg=dmg; this.kb=kb;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.life=8; this.solid=false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>update(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>this.life--;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(this.life&lt;=0) this.dead=true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Collision with other cow</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const foe = this.owner===P1?P2:P1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(rectCircle(this.x-this.w/2,this.y-this.h/2,this.w,this.h,foe.x,foe.y,foe.r)){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const dirX = Math.sign(this.owner.facing) || 1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>foe.damage(this.dmg, dirX*this.kb*2, -2);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this.dead=true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>sfx('bonk');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>draw(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.globalAlpha=.08;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#fff';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillRect(this.x-this.w/2, this.y-this.h/2, this.w, this.h);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.restore();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>class Obstacle {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>constructor(x,y,r){ this.x=x; this.y=y; this.r=r; this.solid=true; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>update(){}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>draw(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// hay bale</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#caa756';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.strokeStyle='#8f6d2a'; ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// ties</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.strokeStyle='rgba(0,0,0,.2)';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.beginPath(); ctx.arc(this.x,this.y,this.r*0.6,0,Math.PI*2); ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>class Milk {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>constructor(x,y){ this.x=x; this.y=y; this.r=14; this.solid=false; this.life=9000; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>update(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// pickup</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for(const c of [P1,P2]){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const d=Math.hypot(c.x-this.x,c.y-this.y);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(d &lt; c.r + this.r){</p>
+<p class="p1"><span class="Apple-converted-space">          </span>c.hp = clamp(c.hp+15,0,c.maxHp);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>this.dead=true;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>sfx('milk');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>draw(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.save();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.translate(this.x,this.y);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#ffffff';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.beginPath(); ctx.arc(0,0,this.r,0,Math.PI*2); ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.strokeStyle='#88c7ff'; ctx.lineWidth=3; ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.restore();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Geometry helpers for drawing cow features ---------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function roundCow(x,y,r){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const path = new Path2D();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>path.ellipse(x,y,r,r,0,0,Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return path;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function horn(x,y,dir){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.moveTo(x, y);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.quadraticCurveTo(x+dir*10, y-10, x+dir*20, y-2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.quadraticCurveTo(x+dir*10, y+6, x, y);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.strokeStyle='rgba(0,0,0,.25)'; ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function eye(x,y){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Collision ------------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function rectCircle(rx, ry, rw, rh, cx, cy, cr){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const nearestX = clamp(cx, rx, rx+rw);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const nearestY = clamp(cy, ry, ry+rh);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const dx = cx - nearestX, dy = cy - nearestY;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return (dx*dx + dy*dy) &lt;= cr*cr;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- SFX (tiny beeps using WebAudio) -------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const audioCtx = new (window.AudioContext||window.webkitAudioContext)();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function sfx(type){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const o = audioCtx.createOscillator();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const g = audioCtx.createGain();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>o.connect(g); g.connect(audioCtx.destination);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const t = audioCtx.currentTime;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let f1=220, f2=0, dur=.08;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(type==='bonk'){ f1=110; f2=55; dur=.07; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(type==='dash'){ f1=330; f2=220; dur=.06; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(type==='rage'){ f1=120; f2=40; dur=.25; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(type==='hit'){ f1=180; f2=90; dur=.06; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(type==='milk'){ f1=660; f2=440; dur=.12; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>o.frequency.setValueAtTime(f1, t);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>o.frequency.exponentialRampToValueAtTime(f2||f1/2, t+dur);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>g.gain.setValueAtTime(.15, t);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>g.gain.exponentialRampToValueAtTime(.0001, t+dur);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>o.start(t); o.stop(t+dur);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- World setup ----------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const objects = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const UI = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>drawBars(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// top banner</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='rgba(0,0,0,.25)';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillRect(0,0,W,40);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>drawMeter(20,12,300,16, P1.hp/P1.maxHp, '#ff6b6b', 'HP');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>drawMeter(20,28,300,8, P1.rage/P1.maxRage, '#ffd36b', 'RAGE', true);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>drawMeter(W-320,12,300,16, P2.hp/P2.maxHp, '#4cd97b', 'HP', false, true);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>drawMeter(W-320,28,300,8, P2.rage/P2.maxRage, '#ffd36b', 'RAGE', true, true);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// round pips</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#fff';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for(let i=0;i&lt;2;i++){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.globalAlpha = i&lt;Game.p1Wins?1:.2;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillRect(340 + i*16, 14, 10,10);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.globalAlpha = i&lt;Game.p2Wins?1:.2;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillRect(W-340 - i*16, 14, 10,10);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.globalAlpha=1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// bot badge</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(Game.botEnabled){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillStyle='rgba(122,215,255,.2)';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillRect(W/2-60,8,120,24);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillStyle='#7ad7ff';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.font='bold 14px system-ui';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.textAlign='center';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillText('BOT ON (P2)', W/2, 25);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>drawCenterLabel(text, sub=''){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='rgba(0,0,0,.45)';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillRect(0,0,W,H);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillStyle='#e7f2ff';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.font='bold 36px system-ui';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.textAlign='center';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillText(text, W/2, H/2 - 8);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(sub){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillStyle='#7d8aa6';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.font='16px system-ui';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillText(sub, W/2, H/2 + 20);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function drawMeter(x,y,w,h, t, color, label, thin=false, right=false){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.save();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.globalAlpha=.9;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle='rgba(255,255,255,.06)'; ctx.fillRect(x,y,w,h);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle=color; ctx.fillRect(x,y, Math.max(0,w*t), h);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(x,y,w,h);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle='#cfe4ff'; ctx.font=(thin?'10px':'12px')+' system-ui';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.textAlign= right?'right':'left';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillText(label, right?x+w-4:x+4, y-2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.restore();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// pasture background &amp; sidelines</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function drawArena(){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Grass gradient</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const g=ctx.createLinearGradient(0,80,0,H);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>g.addColorStop(0,'#274d27'); g.addColorStop(1,'#1b3a1b');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle=g; ctx.fillRect(0,40,W,H-40);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Fence</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle='#8c6b3e';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for(let i=0;i&lt;20;i++){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const px = i*(W/20)+10;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ctx.fillRect(px, 44, 6, 36);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillRect(0,48,W,6);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillRect(0,68,W,6);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// players</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const P1 = new Cow(220, H/2+40, '#b9e0ff', {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>up:'w',down:'s',left:'a',right:'d',attack:'f',dash:'g',rage:'h',name:'Bluebell'</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const P2 = new Cow(W-220, H/2+40, '#c4ffcf', {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight',attack:'/',dash:'.',rage:';',name:'Clover'</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}, false);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Obstacles (hay bales)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const hayLayout = [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Obstacle(W/2-120, H/2+40, 18),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Obstacle(W/2+120, H/2+40, 18),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>new Obstacle(W/2, H/2-10, 22),</p>
+<p class="p1"><span class="Apple-converted-space">  </span>];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>objects.push(...hayLayout);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Round / Match flow ---------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function startRound(){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Game.phase='playing';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Game.lastTick = now();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Game.milkTimer = 600; // frames</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// reset players</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Object.assign(P1,{x:220,y:H/2+40,vx:0,vy:0,hp:100,stamina:100,rage:0,ifr:0,rageActive:0});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Object.assign(P2,{x:W-220,y:H/2+40,vx:0,vy:0,hp:100,stamina:100,rage:0,ifr:0,rageActive:0,isBot:Game.botEnabled});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// clear temp objects but keep hay</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for(let i=objects.length-1;i&gt;=0;i--) if(!(objects[i] instanceof Obstacle)) objects.splice(i,1);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function roundOver(winner){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(Game.phase!=='playing') return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Game.phase='roundOver';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(winner===1) Game.p1Wins++; else Game.p2Wins++;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Match over?</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(Game.p1Wins===2 || Game.p2Wins===2){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>Game.phase='matchOver';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// --- Loop -----------------------------------------------------------------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function loop(){</p>
+<p class="p1"><span class="Apple-converted-space">    </span>requestAnimationFrame(loop);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const t = now();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const dt = Math.min(33, t - Game.lastTick); // ms cap</p>
+<p class="p1"><span class="Apple-converted-space">    </span>Game.lastTick = t;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Update</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(Game.phase==='playing'){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>P1.update(); P2.update();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Spawn milk occasionally</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if(--Game.milkTimer&lt;=0){</p>
+<p class="p1"><span class="Apple-converted-space">        </span>Game.milkTimer = rand(900,1400);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>objects.push(new Milk(rand(80,W-80), rand(120,H-80)));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for(const o of objects) o.update?.();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Cleanup</p>
+<p class="p1"><span class="Apple-converted-space">      </span>for(let i=objects.length-1;i&gt;=0;i--) if(objects[i].dead) objects.splice(i,1);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Draw</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.clearRect(0,0,W,H);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>drawArena();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for(const o of objects) o.draw?.();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>P1.draw(); P2.draw();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>UI.drawBars();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// overlays</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if(Game.phase==='menu'){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>UI.drawCenterLabel('Press Enter to Start', 'B to enable Bot · Best of 3');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else if(Game.phase==='roundOver'){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>UI.drawCenterLabel('Round Over', 'Press Enter for next round');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else if(Game.phase==='matchOver'){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const text = Game.p1Wins&gt;Game.p2Wins ? 'Bluebell wins the Match!' : 'Clover wins the Match!';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>UI.drawCenterLabel(text, 'Press Enter to play again');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else if(Game.phase==='paused'){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>UI.drawCenterLabel('Paused', 'Press P to resume');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>loop();</p>
+<p class="p1">})();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
